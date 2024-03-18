@@ -20,14 +20,14 @@
       margin: 0;
     }
 
-    h1 {
+    /* h1 {
       font-size: 16px;
       font-family: Segoe UI;
       line-height: 20px;
       color: whitesmoke;
       display: table-cell;
       padding: 13px 0px 0px 20px;
-    }
+    } */
 
     #heading {
       background-color: black;
@@ -40,7 +40,11 @@
     }
 
     div[role="form"]{
-      background-color: black;
+      background-color: white;
+    }
+
+    div[role="main"]{
+      background-color: white;
     }
 
     #webchat {
@@ -52,7 +56,7 @@
     }
 
     #heading {
-      background-color: black;
+      background-color: rgb(0, 70, 140);
       background-repeat: no-repeat;
       background-size: cover;
       background-attachment: fixed;
@@ -77,6 +81,16 @@
       padding: 13px 0px 0px 20px;
     }
 
+    /* h1 {
+      font-size: 14px;
+      font-family: Segoe UI;
+      font-style: normal;
+      font-weight: 600;
+      line-height: 20px;
+      color: #F3F2F1;
+      letter-spacing: 0.005em;
+      padding: 13px 0px 0px 20px;
+    } */
     #chatwindow {
       height: 80%;
       width: 100%;
@@ -90,12 +104,12 @@
       position: fixed;
     }
   </style>
-
 </head>
-<body>
+<body onload="triggerLoginButton()">
+
 <div id="chatwindow">
   <div id="heading">
-    <div><span>SSO Test Bot</span></div>
+    <div><span><h1>CASI</h1></span></div>
   </div>
   <div style="z-index: 100;position: absolute;margin-top: 50px;width: 100%;">
     <div>
@@ -105,78 +119,15 @@
   </div>
   <div id="webchat">
   </div>
-
 </div>
 
 <script>
-  // Define styleOptions in the global scope
-  var styleOptions = {};
-
-  // Function to fetch the user's profile picture from Microsoft Graph API
-  async function getUserProfilePicture(accessToken) {
-    const graphApiEndpoint = 'https://graph.microsoft.com/v1.0/me/photo/$value';
-    try {
-      const response = await fetch(graphApiEndpoint, {
-        headers: {
-          'Authorization': `Bearer ${accessToken}`
-        }
-      });
-
-      if (response.ok) {
-        const blob = await response.blob();
-        return URL.createObjectURL(blob);
-      } else {
-        console.error('Failed to retrieve profile picture:', response.status, response.statusText);
-        return null;
-      }
-    } catch (error) {
-      console.error('Error fetching profile picture:', error);
-      return null;
-    }
-  }
-
-  // Function to render Web Chat with updated style options
-  function renderWebChatWithStyleOptions(styleOptions) {
-    window.WebChat.renderWebChat(
-      {
-        directLine: directLine,
-        store,
-        userID: userId,
-        styleOptions
-      },
-      document.getElementById('webchat')
-    );
-  }
-
   function onSignin(idToken) {
     let user = clientApplication.getAccount();
     document.getElementById("userName").innerHTML = "Currently logged in as " + user.name;
     let requestObj1 = {
       scopes: ["user.read", 'openid', 'profile']
     };
-
-    clientApplication.acquireTokenSilent(requestObj1)
-      .then(tokenResponse => {
-        getUserProfilePicture(tokenResponse.accessToken)
-          .then(profilePictureUrl => {
-            // Use profilePictureUrl to set the userAvatarImage
-            console.log('Before update:', styleOptions.userAvatarImage);
-
-            if (profilePictureUrl) {
-              // Set the userAvatarImage in styleOptions
-              console.log("done");
-              styleOptions.userAvatarImage = profilePictureUrl;
-
-              console.log('After update:', styleOptions.userAvatarImage);
-
-              // Render Web Chat with updated styleOptions
-              renderWebChatWithStyleOptions(styleOptions);
-            }
-          })
-          .catch(error => console.error('Failed to retrieve profile picture:', error));
-      })
-      .catch(error => console.error('Failed to acquire token silently:', error));
-
   }
 
   function onSignInClick() {
@@ -184,7 +135,7 @@
       scopes: ["user.read", 'openid', 'profile']
     };
 
-    clientApplication.loginPopup(requestObj).then(onSignin).catch(function (error) { console.log(error) });
+    clientApplication.loginPopup(requestObj).then(onSignin).catch(function (error) {console.log(error) });
   }
 
   function getOAuthCardResourceUri(activity) {
@@ -232,14 +183,18 @@
 
     return await res.json();
   }
+
+  function triggerLoginButton() {
+    document.getElementById("login").click();
+  }
 </script>
 
 <script>
   var clientApplication;
-  (function () {
+  (function (){
     var msalConfig = {
       auth: {
-        clientId: 'bd3c3fed-3439-4340-bde0-f9798b55ca73',
+        clientId: 'b1b342d7-f498-42ac-ab7c-5bf03dff2e3a',
         authority: 'https://login.microsoftonline.com/a2d50e3d-6226-4421-8b3a-0f2a57e22bae'
       },
       cache: {
@@ -250,16 +205,15 @@
     if (!clientApplication) {
       clientApplication = new Msal.UserAgentApplication(msalConfig);
     }
-  }());
+  } ());
 
   (async function main() {
-
     // Add your BOT ID below 
-    var theURL = "https://defaulta2d50e3d622644218b3a0f2a57e22b.ae.environment.api.powerplatform.com/powervirtualagents/botsbyschema/crc6a_copilot1/directline/token?api-version=2022-03-01-preview"; // you can find the token URL via the mobile app channel configuration
+    var theURL = "https://ef6bb4dc97f7e2d7a298199900b5ca.15.environment.api.powerplatform.com/powervirtualagents/botsbyschema/crc6a_copilot1/directline/token?api-version=2022-03-01-preview" // you can find the token URL via the mobile app channel configuration
 
-    var userId = clientApplication.account?.accountIdentifier != null ?
-      ("You-customized-prefix" + clientApplication.account.accountIdentifier).substr(0, 64)
-      : (Math.random().toString() + Date.now().toString()).substr(0, 64);
+    var userId = clientApplication.account?.accountIdentifier != null ? 
+                    ("You-customized-prefix" + clientApplication.account.accountIdentifier).substr(0, 64) 
+                    : (Math.random().toString() + Date.now().toString()).substr(0,64);
 
     const { token } = await fetchJSON(theURL);
     const directLine = window.WebChat.createDirectLine({ token });
@@ -322,24 +276,27 @@
         return next(action);
     });
 
-    styleOptions = {
+    const styleOptions = {
       // Add styleOptions to customize Web Chat canvas
-      hideUploadButton: true,
-      backgroundColor: 'lightgray',
-      bubbleBackground: 'rgba(0, 234, 255, .1)',
-      bubbleFromUserBackground: 'rgba(0, 255, 0, .1)',
-      accent: '#00809d',
-      botAvatarBackgroundColor: '#FFFFFF',
-      botAvatarImage: 'https://learn.microsoft.com/azure/bot-service/v4sdk/media/logo_bot.svg',
-      botAvatarInitials: 'BT',
-      userAvatarImage: 'https://avatars.githubusercontent.com/u/661465'
+      // backgroundColor: 'lightgray',
+      // bubbleBackground: 'lightgray',
+      bubbleFromUserBackground: 'rgb(0, 70, 140)',
+      bubbleFromUserTextColor: 'White',
+      botAvatarImage: 'https://i.ibb.co/Ms1B7DZ/botIcon.png',
+      botAvatarInitials: 'CASI',
+      // accent: '#00809d',
+      // botAvatarBackgroundColor: '#FFFFFF',
+      // botAvatarImage: 'https://learn.microsoft.com/azure/bot-service/v4sdk/media/logo_bot.svg',
+      // botAvatarInitials: 'BT',
+      // userAvatarImage: 'https://avatars.githubusercontent.com/u/661465',
+      hideUploadButton: true
     };
 
     window.WebChat.renderWebChat(
       {
         directLine: directLine,
         store,
-        userID: userId,
+        userID:userId,
         styleOptions
       },
       document.getElementById('webchat')
